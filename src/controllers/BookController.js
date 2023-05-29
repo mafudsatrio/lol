@@ -3,18 +3,55 @@ import { nanoid } from 'nanoid'
 
 class BookController {
     async getAllData(request, h) {
+        // add search name reading finished
+        const { name, reading, finished } = request.query;
         const data = Book;
 
-        return h.response({
-            "status": "success",
-            "data": {
-                "books": data.map((book) => ({
-                    "id": book.id,
-                    "name": book.name,
-                    "publisher": book.publisher,
-                })),
-            },
-        }).code(200);
+        if (name !== undefined) {
+            return h.response({
+                "status": "success",
+                "data": {
+                    "books": data.filter((book) => book.name.toLowerCase().includes(name.toLowerCase())).map((book) => ({
+                        "id": book.id,
+                        "name": book.name,
+                        "publisher": book.publisher,
+                    })),
+                },
+            }).code(200);
+        } else if (reading !== undefined) {
+            return h.response({
+                "status": "success",
+                "data": {
+                    "books": data.filter((book) => book.reading === (reading === '1')).map((book) => ({
+                        "id": book.id,
+                        "name": book.name,
+                        "publisher": book.publisher,
+                    })),
+                },
+            }).code(200);
+        } else if (finished !== undefined) {
+            return h.response({
+                "status": "success",
+                "data": {
+                    "books": data.filter((book) => book.finished === (finished === '1')).map((book) => ({
+                        "id": book.id,
+                        "name": book.name,
+                        "publisher": book.publisher,
+                    })),
+                },
+            }).code(200);
+        } else {
+            return h.response({
+                "status": "success",
+                "data": {
+                    "books": data.map((book) => ({
+                        "id": book.id,
+                        "name": book.name,
+                        "publisher": book.publisher,
+                    })),
+                },
+            }).code(200);
+        }
     }
 
     async getDetail(request, h) {
